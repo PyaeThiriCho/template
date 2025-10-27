@@ -37,3 +37,7 @@ Route::get('/errors',[App\Http\Controllers\AdminTemplateController::class, 'erro
 Route::get('/charts',[App\Http\Controllers\AdminTemplateController::class, 'chart'])->name('charts');
 Route::get('/tables',[App\Http\Controllers\AdminTemplateController::class, 'table'])->name('tables');
 
+
+Auth::routes();
+
+Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
