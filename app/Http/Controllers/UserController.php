@@ -32,23 +32,16 @@ class UserController extends Controller
         //validation
         $request->validate([
             'userName'     => 'required|min:3',
-            'userEmail'    => 'required|min:3',
+            'userEmail'    => 'required|email|unique:users,email', // Add email format and unique validation
             'userPassword' => 'required|min:6',
         ]);
 
-      
-        $userName = $request->userName;
-        $userEmail = $request->userEmail;
-        $userPassword = $request->userPassword;
-       
-
         //store in the database 
-       User::create([
-        'name'     => $request->userName,  
-        'email'    => $request->userEmail, 
-        'password' => bcrypt($request->userPassword),
-    ]);
-
+        $user = new User();
+        $user->name = $request->userName;
+        $user->email = $request->userEmail;
+        $user->password = bcrypt($request->userPassword); // Don't forget to hash!
+        $user->save();
 
         //redirect to list page
         return redirect()->route('users.index')->with('success', 'User created successfully.');
