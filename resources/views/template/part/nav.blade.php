@@ -82,9 +82,9 @@
                         <div class="sb-nav-link-icon"><i class="fas fa-chart-area"></i></div>
                         Charts
                     </a>
-                    <a class="nav-link" href="{{ route('tables') }}">
+                    <a class="nav-link" href="{{ route('users.index')}}">
                         <div class="sb-nav-link-icon"><i class="fas fa-table"></i></div>
-                        Tables
+                        Users
                     </a>
                 </div>
             </div>
