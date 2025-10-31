@@ -32,7 +32,7 @@ class UserController extends Controller
         //validation
         $request->validate([
             'userName'     => 'required|min:3',
-            'userEmail'    => 'required|email|unique:users,email', // Add email format and unique validation
+            'userEmail'    => 'required|email|unique:users,email', 
             'userPassword' => 'required|min:6',
         ]);
 
@@ -40,7 +40,7 @@ class UserController extends Controller
         $user = new User();
         $user->name = $request->userName;
         $user->email = $request->userEmail;
-        $user->password = bcrypt($request->userPassword); // Don't forget to hash!
+        $user->password = bcrypt($request->userPassword); 
         $user->save();
 
         //redirect to list page
