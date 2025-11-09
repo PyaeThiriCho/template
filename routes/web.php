@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\PermissionController;
+use App\Http\Controllers\RoleController;
 
 /*
 |--------------------------------------------------------------------------
@@ -48,3 +49,6 @@ Route::resource('users',UserController::class);
 
 //permission
 Route::resource('permissions',PermissionController::class);
+
+//role
+Route::resource('roles',RoleController::class);
