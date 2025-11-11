@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 use Illuminate\Http\Request;
+use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 
 class RoleController extends Controller
@@ -20,7 +21,8 @@ class RoleController extends Controller
      */
     public function create()
     {
-        return view('backend.role.create');
+        $permissions = Permission::all();
+        return view('backend.role.create', compact('permissions'));
     }
 
     /**
@@ -29,13 +31,20 @@ class RoleController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name' => 'required|min:3|unique:roles,name'
+            'name' => 'required|min:3|unique:roles,name',
+            'permissions' => 'required|array',
         ]);
 
         $role = new Role();
         $role->name = $request->name; 
         $role->guard_name = 'web'; 
         $role->save();
+
+        //Convert permission IDs to names
+        $permissions = Permission::whereIn('id', $request->permissions)->pluck('name')->toArray();
+
+        // Attach permissions by name
+        $role->syncPermissions($permissions);
 
         return redirect()->route('roles.index')->with('success', 'Role created successfully');       
         
@@ -63,12 +72,19 @@ class RoleController extends Controller
     public function update(Request $request, Role $role)
     {
         $request->validate([
-            'name' => 'required|min:3|unique:roles,name'
+            'name' => 'required|min:3|unique:roles,name',
+            'permissions' => 'required|array',
         ]);
 
         $role->name = $request->name; 
         $role->guard_name = 'web'; 
         $role->save();
+
+        // Convert permission IDs to names
+        $permissions = Permission::whereIn('id', $request->permissions)->pluck('name')->toArray();
+
+        // Sync permissions
+        $role->syncPermissions($permissions);
 
         return redirect()->route('roles.index')->with('success', 'Role created successfully');       
         

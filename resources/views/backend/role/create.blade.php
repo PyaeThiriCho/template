@@ -44,6 +44,27 @@
                                 @enderror
                             </div>
 
+                              {{-- Permissions --}}
+                                <div class="mb-3">
+                                    <label for="permissions" class="form-label">PERMISSIONS *</label>
+
+                                    <div class="mb-2">
+                                        <button type="button" id="select-all" class="btn btn-sm btn-primary">Select All</button>
+                                        <button type="button" id="deselect-all" class="btn btn-sm btn-secondary">Deselect All</button>
+                                    </div>
+
+                                    <select name="permissions[]" id="permissions" class="form-control" multiple required>
+                                        @foreach ($permissions as $permission)
+                                            <option value="{{ $permission->id }}">{{ $permission->name }}</option>
+                                        @endforeach
+                                    </select>
+
+                                    @error('permissions')
+                                        <small class="text-danger">{{ $message }}</small>
+                                    @enderror
+                                </div>
+
+
                             <div class="d-flex gap-2">
                                 <button type="submit" class="btn btn-primary flex-fill">
                                     SAVE
