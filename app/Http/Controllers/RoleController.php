@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
+use Illuminate\Validation\Rule;
 
 class RoleController extends Controller
 {
@@ -63,7 +64,8 @@ class RoleController extends Controller
      */
     public function edit(Role $role)
     {
-        return view('backend.role.edit', compact('role'));
+        $permissions = Permission::all();
+        return view('backend.role.edit', compact('role', 'permissions'));
     }
 
     /**
@@ -72,7 +74,7 @@ class RoleController extends Controller
     public function update(Request $request, Role $role)
     {
         $request->validate([
-            'name' => 'required|min:3|unique:roles,name',
+            'name' => ['required', Rule::unique('roles')->ignore($role->id)],
             'permissions' => 'required|array',
         ]);
 

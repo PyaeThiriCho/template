@@ -1,50 +1,76 @@
 @extends('template.layout')
 
 @section('content')
-    <div class="container mt-5">
-        <div class="row justify-content-center">
-            <div class="col-md-6">
-                <div class="card shadow">
-                    <div class="card-header bg-dark text-white text-center">
-                        <h4 class="mb-0">Create Role</h4>
-                    </div>
-                    
-                    <div class="card-body p-4">
-                        <!-- Success/Error Messages -->
-                        @if(session('success'))
-                            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                                {{ session('success') }}
-                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                            </div>
-                        @endif
 
-                        <form action="{{ route('roles.store') }}" method="POST">
-                            @csrf
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-header bg-dark text-white text-center">
+                    <h4 class="mb-0">Edit Role</h4>
+                </div>
+                
+                <div class="card-body p-4">
+                    <!-- Success/Error Messages -->
+                    @if(session('success'))
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            {{ session('success') }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    @endif
+
+                    <form action="{{ route('roles.update', $role->id) }}" method="POST">
+                        @csrf
+                        @method('PUT')
+
+                        {{-- Role Name --}}
+                        <div class="mb-3">
+                            <label for="name" class="form-label fw-bold">TITLE<span class="text-danger">*</span></label>
+                            <input type="text" id="name" name="name" class="form-control @error('name') is-invalid @enderror" 
+                                   placeholder="Enter role name" value="{{ old('name', $role->name) }}" required>
                             
-                            <div class="mb-3">
-                                <label for="name" class="form-label fw-bold">TITLE<span class="text-danger">*</span></label>
-                                <input type="text" id="name" name="name" class="form-control @error('name') is-invalid @enderror" 
-                                       placeholder="Enter role name" value="{{ old('name', $role->name ?? '') }}" required>
-                                
-                                @error('name')
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
-                                @enderror
+                            @error('name')
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                            @enderror
+                        </div>
+
+                        {{-- Permissions --}}
+                        <div class="mb-3">
+                            <label for="permissions" class="form-label">PERMISSIONS *</label>
+
+                            <div class="mb-2">
+                                <button type="button" id="select-all" class="btn btn-sm btn-primary">Select All</button>
+                                <button type="button" id="deselect-all" class="btn btn-sm btn-secondary">Deselect All</button>
                             </div>
 
-                            <div class="d-flex gap-2">
-                                <button type="submit" class="btn btn-primary flex-fill">
-                                    SAVE
-                                </button>
-                                <a href="{{ route('roles.index') }}" class="btn btn-danger flex-fill">
-                                    CANCEL
-                                </a>
-                            </div>
-                        </form>
-                    </div>
+                            <select name="permissions[]" id="permissions" class="form-control" multiple required>
+                                @foreach ($permissions as $permission)
+                                    <option value="{{ $permission->id }}"
+                                        {{ in_array($permission->id, $role->permissions->pluck('id')->toArray()) ? 'selected' : '' }}>
+                                        {{ $permission->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+
+                            @error('permissions')
+                                <small class="text-danger">{{ $message }}</small>
+                            @enderror
+                        </div>
+
+                        {{-- Buttons --}}
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-primary flex-fill">
+                                UPDATE
+                            </button>
+                            <a href="{{ route('roles.index') }}" class="btn btn-danger flex-fill">
+                                CANCEL
+                            </a>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
     </div>
-@endsection
+</div>
