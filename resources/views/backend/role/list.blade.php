@@ -26,6 +26,7 @@
                                 <tr>
                                     <th width="80">ID</th>
                                     <th>NAME</th>
+                                    <th>PERMISSIONS</th>
                                     <th width="180" class="text-center">ACTIONS</th>
                                 </tr>
                             </thead>
@@ -34,6 +35,11 @@
                                     <tr>
                                         <td><strong>{{ $role->id }}</strong></td>
                                         <td><code>{{ $role->name }}</code></td>
+                                        <td>
+                                            @foreach($role->permissions as $permission)
+                                                <span class="badge bg-primary mb-1">{{ $permission->name }}</span>
+                                            @endforeach
+                                        </td>
                                         <td class="text-center">
                                             <a href="{{ route('roles.edit', $role->id) }}" 
                                                class="btn btn-sm btn-outline-warning me-2">
@@ -47,7 +53,7 @@
                                                 @method('DELETE')
                                                 <button type="submit" 
                                                         class="btn btn-sm btn-outline-danger"
-                                                        onclick="return confirm('Are you sure you want to delete this permission?')">
+                                                        onclick="return confirm('Are you sure you want to delete this role?')">
                                                     <i class="fas fa-trash-alt me-1"></i>Delete
                                                 </button>
                                             </form>
@@ -55,7 +61,7 @@
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="3" class="text-center py-4 text-muted">
+                                        <td colspan="4" class="text-center py-4 text-muted">
                                             <i class="fas fa-inbox fa-2x mb-2"></i>
                                             <p class="mb-0">No roles found.</p>
                                         </td>
