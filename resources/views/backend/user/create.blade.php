@@ -53,6 +53,21 @@
                         </div>
                     </div>
 
+                    <!--Role-->
+                    <div class="mb-3">
+                        <label for="roles" class="form-label">Roles *</label>
+                        <div class="mb-2">
+                            <button type="button" id="select-all" class="btn btn-sm btn-primary">Select All</button>
+                            <button type="button" id="deselect-all" class="btn btn-sm btn-secondary">Deselect All</button>
+                        </div>
+
+                        <select name="roles[]" id="roles" class="form-select" multiple>
+                            @foreach($roles as $role)
+                                <option value="{{ $role->name }}">{{ $role->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
                     <div class="text-end">
                         <a href="{{ route('users.index') }}" class="btn btn-secondary me-2">Back</a>
                         <button type="submit" class="btn btn-primary px-4">Save</button>

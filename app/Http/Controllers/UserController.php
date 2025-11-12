@@ -4,6 +4,7 @@
 namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Spatie\Permission\Models\Role;
 
 class UserController extends Controller
 {
@@ -12,8 +13,8 @@ class UserController extends Controller
      */
     public function index()
     {
-        $users =User::all();
-        return view('backend.user.list',compact('users'));
+        $users = User::with('roles')->get(); 
+        return view('backend.user.list', compact('users'));
     }
 
     /**
@@ -21,7 +22,8 @@ class UserController extends Controller
      */
     public function create()
     {
-        return view('backend.user.create');
+        $roles = Role::all();
+        return view('backend.user.create', compact('roles'));
     }
 
     /**
@@ -43,6 +45,10 @@ class UserController extends Controller
         $user->password = bcrypt($request->userPassword); 
         $user->save();
 
+
+        // Assign roles
+        $user->syncRoles($request->roles);
+
         //redirect to list page
         return redirect()->route('users.index')->with('success', 'User created successfully.');
 
@@ -62,8 +68,11 @@ class UserController extends Controller
     public function edit(string $id)
     {
 
-        $user =User::find($id);
-        return view('backend.user.edit',compact('user'));
+        $user = User::findOrFail($id);
+        $roles = Role::all();
+        $userRoles = $user->roles->pluck('name')->toArray();
+
+        return view('backend.user.edit', compact('user', 'roles', 'userRoles'));
     }
 
     /**
@@ -71,26 +80,30 @@ class UserController extends Controller
      */
     public function update(Request $request, string $id)
     {
-           //validation
-            $request->validate([
-                'userName'     => 'required|min:3',
-                'userEmail'    => 'required|min:3',
-                'userPassword' => 'required|min:6',
-            ]);
-      
+        $user = User::findOrFail($id);
 
-        $userName = $request->userName;
-        $userEmail = $request->userEmail;
-        $userPassword = $request->userPassword;
+        // Validation
+        $request->validate([
+            'userName'  => 'required|min:3',
+            'userEmail' => 'required|email|min:3|unique:users,email,' . $user->id,
+           //'userPassword' => 'nullable|min:6', 
+            'roles' => 'nullable|array',
+            'roles.*' => 'exists:roles,name',
+        ]);
 
-        // Update into database table
-        $user = User::find($id);
-        $user->name = $userName;
-        $user->email = $userEmail;
-        $user->password = bcrypt($userPassword);
+        // Update user info
+        $user->name = $request->userName;
+        $user->email = $request->userEmail;
+
+        if ($request->filled('userPassword')) {
+            $user->password = bcrypt($request->userPassword);
+        }
+
         $user->save();
 
-        // Redirect to list page
+        // Sync roles
+        $user->syncRoles($request->roles ?? []);
+
         return redirect()->route('users.index')->with('success', 'User updated successfully.');
     }
 

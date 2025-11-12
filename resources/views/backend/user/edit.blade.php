@@ -10,59 +10,108 @@
             </div>
 
             <div class="card-body">
-                <form action="{{route('users.update',$user->id)}}" method="POST" enctype="multipart/form-data">
+                <form action="{{ route('users.update', $user->id) }}" method="POST" enctype="multipart/form-data">
                     @method('PUT')
                     @csrf
 
+                    {{-- Name --}}
                     <div class="mb-3 row">
                         <label for="name" class="col-sm-3 col-form-label">Name</label>
                         <div class="col-sm-9">
-                            <input type="text" name="userName" class="form-control @error('userName') is-invalid @enderror" id="name" placeholder="Eg: John Doe" value="{{ old('userName', $user->name ?? '') }}">
-                            
+                            <input 
+                                type="text" 
+                                name="userName" 
+                                class="form-control @error('userName') is-invalid @enderror" 
+                                id="name" 
+                                placeholder="Eg: John Doe" 
+                                value="{{ old('userName', $user->name ?? '') }}"
+                            >
                             @error('userName')
                                 <span class="invalid-feedback" role="alert">
                                     <strong>{{ $message }}</strong>
                                 </span>
-                             @enderror
+                            @enderror
                         </div>
                     </div>
 
+                    {{-- Email --}}
                     <div class="mb-3 row">
                         <label for="email" class="col-sm-3 col-form-label">Email</label>
                         <div class="col-sm-9">
-                            <input type="email" name="userEmail" class="form-control @error('userEmail') is-invalid @enderror" id="email"  value="{{ old('userEmail', $user->email ?? '') }}"  placeholder="example@gmail.com">
-                        </div>
-
-                        @error('userEmail')
+                            <input 
+                                type="email" 
+                                name="userEmail" 
+                                class="form-control @error('userEmail') is-invalid @enderror" 
+                                id="email"  
+                                value="{{ old('userEmail', $user->email ?? '') }}"  
+                                placeholder="example@gmail.com"
+                            >
+                            @error('userEmail')
                                 <span class="invalid-feedback" role="alert">
                                     <strong>{{ $message }}</strong>
                                 </span>
-                        @enderror
+                            @enderror
+                        </div>
                     </div>
 
-                    <div class="mb-3 row">
+                    {{-- Password --}}
+                    {{-- <div class="mb-3 row">
                         <label for="password" class="col-sm-3 col-form-label">Password</label>
                         <div class="col-sm-9">
-                            <input type="password" name="userPassword" class="form-control @error('userPassword') is-invalid @enderror" value="{{ old('userPassword', $user->password ?? '') }}"  id="password" placeholder="Enter password">
-                        
+                            <input 
+                                type="password" 
+                                name="userPassword" 
+                                class="form-control @error('userPassword') is-invalid @enderror" 
+                                id="password" 
+                                placeholder="Enter new password (leave blank to keep current)"
+                            >
                             @error('userPassword')
                                 <span class="invalid-feedback" role="alert">
                                     <strong>{{ $message }}</strong>
                                 </span>
                             @enderror
-                        
+                        </div>
+                    </div> --}}
+
+                    {{-- Roles --}}
+                    <div class="mb-3 row">
+                        <label for="roles" class="col-sm-3 col-form-label">Roles</label>
+                        <div class="col-sm-9">
+                            <div class="d-flex mb-2">
+                                <button type="button" id="select-all" class="btn btn-sm btn-primary me-2">Select All</button>
+                                <button type="button" id="deselect-all" class="btn btn-sm btn-secondary">Deselect All</button>
+                            </div>
+                            <select 
+                                name="roles[]" 
+                                id="roles" 
+                                class="form-select @error('roles') is-invalid @enderror" 
+                                multiple
+                            >
+                                @foreach($roles as $role)
+                                    <option value="{{ $role->name }}" {{ in_array($role->name, $userRoles ?? []) ? 'selected' : '' }}>
+                                        {{ $role->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+
+                            @error('roles')
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                            @enderror
                         </div>
                     </div>
 
+                    {{-- Buttons --}}
                     <div class="text-end">
                         <a href="{{ route('users.index') }}" class="btn btn-secondary me-2">Back</a>
                         <button type="submit" class="btn btn-primary px-4">Save</button>
                     </div>
-
                 </form>
             </div>
         </div>
     </div>
 </div>
+
 
 @endsection
