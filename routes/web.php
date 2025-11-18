@@ -2,9 +2,11 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CategoryController;
+
 use App\Http\Controllers\UserController;
-use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\RoleController;
+use App\Http\Controllers\PermissionController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -45,10 +47,23 @@ Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
-Route::resource('users',UserController::class);
 
-//permission
-Route::resource('permissions',PermissionController::class);
 
-//role
-Route::resource('roles',RoleController::class);
+Route::group(['middleware' => ['auth']], function () {
+
+    // Users CRUD
+    Route::group(['middleware' => ['permission:user_create|user_edit|user_delete|user_view']], function () {
+        Route::resource('users', UserController::class);
+    });
+
+    // Permissions CRUD->for admin 
+    Route::group(['middleware' => ['permission:permission_create|permission_edit|permission_delete|permission_view']], function () {
+        Route::resource('permissions', PermissionController::class);
+    });
+
+    // Roles CRUD->for admin    
+    Route::group(['middleware' => ['permission:role_create|role_edit|role_delete|role_view']], function () {
+        Route::resource('roles', RoleController::class);
+    });
+
+});
